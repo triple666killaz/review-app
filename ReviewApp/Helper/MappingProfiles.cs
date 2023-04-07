@@ -24,7 +24,7 @@ public class MappingProfiles : Profile
         CreateMap<ReviewDto, Review>();
         
         CreateMap<Reviewer, ReviewerDto>();
-        CreateMap<ReviewerDto, ReviewerDto>();
+        CreateMap<ReviewerDto, Reviewer>();
 
         
 

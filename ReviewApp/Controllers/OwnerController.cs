@@ -81,6 +81,9 @@ public class OwnerController : Controller
             ModelState.AddModelError("", "Owner already exists");
             return StatusCode(422, ModelState);
         }
+        
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
         var ownerMap = _mapper.Map<Owner>(ownerCreate);
 

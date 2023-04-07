@@ -26,4 +26,10 @@ public class ReviewRepository : IReviewRepository
     {
         return _context.Reviews.Any(r => r.Id == id);
     }
+
+    public bool CreateReview(Review review)
+    {
+        _context.Add(review);
+        return _context.SaveChanges() > 0;
+    }
 }

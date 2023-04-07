@@ -31,4 +31,10 @@ public class ReviewerRepository : IReviewerRepository
     {
         return _context.Reviews.Where(r => r.Reviewer.Id == id).ToList();
     }
+
+    public bool CreateReviewer(Reviewer reviewer)
+    {
+        _context.Add(reviewer);
+        return _context.SaveChanges() > 0;
+    }
 }

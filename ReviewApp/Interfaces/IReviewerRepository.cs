@@ -8,4 +8,5 @@ public interface IReviewerRepository
     Reviewer GetReviewer(int id);
     bool ReviewerExists(int id);
     ICollection<Review> GetReviewerReviews(int id);
+    bool CreateReviewer(Reviewer reviewer);
 }

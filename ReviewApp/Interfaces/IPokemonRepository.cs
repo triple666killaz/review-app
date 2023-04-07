@@ -12,4 +12,5 @@ public interface IPokemonRepository
     bool PokemonExists(int id);
     ICollection<Review> GetPokemonReviews(int id);
     ICollection<Owner> GetPokemonOwners(int id);
+    bool CreatePokemon(int ownerId, int categoryId, Pokemon pokemon);
 }

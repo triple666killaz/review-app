@@ -44,6 +44,8 @@ public class PokemonRepository : IPokemonRepository
         return _context.Pokemon.Any(p => p.Id == pokeId);
     }
 
+   
+
     public ICollection<Review> GetPokemonReviews(int id)
     {
         return _context.Reviews.Where(r => r.Pokemon.Id == id).ToList();
@@ -52,5 +54,21 @@ public class PokemonRepository : IPokemonRepository
     public ICollection<Owner> GetPokemonOwners(int id)
     {
         return _context.PokemonOwners.Where(e => e.PokemonId == id).Select(p => p.Owner).ToList();
+    }
+
+    public bool CreatePokemon(int ownerId, int categoryId, Pokemon pokemon)
+    {
+        var pokemonOwnerEntity = _context.Owners.FirstOrDefault(o => o.Id == ownerId);
+        var pokemonCategoryEntity = _context.Categories.FirstOrDefault(c => c.Id == categoryId);
+
+        var pokemonOwner = new PokemonOwner() { Owner = pokemonOwnerEntity, Pokemon = pokemon };
+        _context.Add(pokemonOwner);
+        
+        var pokemonCategory = new PokemonCategory() { Category = pokemonCategoryEntity, Pokemon = pokemon };
+        _context.Add(pokemonCategory);
+
+        _context.Add(pokemon);
+
+        return _context.SaveChanges() > 0;
     }
 }
