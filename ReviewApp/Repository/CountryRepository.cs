@@ -31,4 +31,10 @@ public class CountryRepository : ICountryRepository
     {
         return _context.Owners.Where(o => o.Country.Id == id).OrderBy(o => o.Country.Name).ToList();
     }
+
+    public bool CreateCountry(Country country)
+    {
+        _context.Add(country);
+        return _context.SaveChanges() > 0;
+    }
 }

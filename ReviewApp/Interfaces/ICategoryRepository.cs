@@ -8,4 +8,5 @@ public interface ICategoryRepository
     Category GetCategory(int id);
     ICollection<Pokemon> GetPokemonByCategoryId(int id);
     bool CategoryExists(int id);
+    bool CreateCategory(Category category);
 }

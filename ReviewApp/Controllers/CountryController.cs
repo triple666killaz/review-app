@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ReviewApp.Dto;
 using ReviewApp.Interfaces;
 using ReviewApp.Models;
@@ -62,5 +63,37 @@ public class CountryController : Controller
 
         return Ok(owners);
     }
+
+    [HttpPost]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public IActionResult CreateCountry([FromBody]CountryDto countryCreate)
+    {
+        if (countryCreate == null)
+            return BadRequest(ModelState);
+
+        var country = _countryRepository.GetCountries()
+            .FirstOrDefault(c => c.Name.Trim().ToUpper() == countryCreate.Name.Trim().ToUpper());
+
+        if (country != null)
+        {
+            ModelState.AddModelError("", "Country already exists");
+            return StatusCode(422, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var countryMap = _mapper.Map<Country>(countryCreate);
+
+        if (!_countryRepository.CreateCountry(countryMap))
+        {
+            ModelState.AddModelError("", "Something went wrong while saving");
+            return StatusCode(500, ModelState);
+        }
+
+        return Ok("Successfully created");
+    }
+    
     
 }

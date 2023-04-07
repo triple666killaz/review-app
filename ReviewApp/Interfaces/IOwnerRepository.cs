@@ -8,5 +8,6 @@ public interface IOwnerRepository
     Owner GetOwner(int id);
     bool OwnerExists(int id);
     ICollection<Pokemon> GetOwnerPokemons(int id);
-    
+    bool CreateOwner(Owner owner);
+
 }

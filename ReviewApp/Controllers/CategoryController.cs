@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ReviewApp.Dto;
 using ReviewApp.Interfaces;
 using ReviewApp.Models;
@@ -18,7 +19,7 @@ public class CategoryController : Controller
         _categoryRepository = categoryRepository;
         _mapper = mapper;
     }
-    
+
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
     public IActionResult GetCategories()
@@ -38,9 +39,9 @@ public class CategoryController : Controller
     {
         if (!_categoryRepository.CategoryExists(categoryId))
             return NotFound();
-        
+
         var category = _mapper.Map<CategoryDto>(_categoryRepository.GetCategory(categoryId));
-        
+
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -62,6 +63,37 @@ public class CategoryController : Controller
 
         return Ok(pokemons);
     }
-    
-    
+
+    [HttpPost]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public IActionResult CreateCategory([FromBody]CategoryDto categoryCreate)
+    {
+        if (categoryCreate == null)
+            return BadRequest(ModelState);
+
+        var category = _categoryRepository
+            .GetCategories()
+            .FirstOrDefault(c => c.Name.Trim().ToUpper() ==
+                                 categoryCreate.Name.Trim().ToUpper());
+
+        if (category != null)
+        {
+            ModelState.AddModelError("", "Category already exists");
+            return StatusCode(422, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var categoryMap = _mapper.Map<Category>(categoryCreate);
+
+        if (!_categoryRepository.CreateCategory(categoryMap))
+        {
+            ModelState.AddModelError("", "Something went wrong while saving");
+            return StatusCode(500, ModelState);
+        }
+
+        return Ok("Successfully created");
+    }
 }

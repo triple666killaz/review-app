@@ -32,6 +32,11 @@ public class OwnerRepository : IOwnerRepository
         return _context.PokemonOwners.Where(e => e.OwnerId == ownerId).Select(o => o.Pokemon).ToList();
     }
 
-    
+    public bool CreateOwner(Owner owner)
+    {
+        _context.Add(owner);
+        return _context.SaveChanges() > 0;
+    }
 }
+
 
