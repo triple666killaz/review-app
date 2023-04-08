@@ -37,4 +37,10 @@ public class CountryRepository : ICountryRepository
         _context.Add(country);
         return _context.SaveChanges() > 0;
     }
+
+    public bool UpdateCountry(Country country)
+    {
+        _context.Update(country);
+        return _context.SaveChanges() > 0;
+    }
 }

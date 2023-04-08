@@ -25,8 +25,6 @@ public class MappingProfiles : Profile
         
         CreateMap<Reviewer, ReviewerDto>();
         CreateMap<ReviewerDto, Reviewer>();
-
         
-
     }
 }

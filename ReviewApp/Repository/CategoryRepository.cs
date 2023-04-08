@@ -37,4 +37,10 @@ public class CategoryRepository : ICategoryRepository
         _context.Add(category);
         return _context.SaveChanges() > 0;
     }
+
+    public bool UpdateCategory(Category category)
+    {
+        _context.Update(category);
+        return _context.SaveChanges() > 0;
+    }
 }
