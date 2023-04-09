@@ -71,9 +71,8 @@ public class PokemonRepository : IPokemonRepository
 
         return _context.SaveChanges() > 0;
     }
-
-    //TODO make something with ownerId and categoryId
-    public bool UpdatePokemon(int ownerId, int categoryId, Pokemon pokemon)
+    
+    public bool UpdatePokemon(Pokemon pokemon)
     {
         _context.Update(pokemon);
         return _context.SaveChanges() > 0;

@@ -131,8 +131,7 @@ public class PokemonController : Controller
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public IActionResult UpdatePokemon(int pokemonId, [FromQuery]int ownerId,
-        [FromQuery]int categoryId, [FromBody]PokemonDto updatedPokemon)
+    public IActionResult UpdatePokemon(int pokemonId, [FromBody]PokemonDto updatedPokemon)
     {
         if (updatedPokemon == null)
             return BadRequest(ModelState);
@@ -148,7 +147,7 @@ public class PokemonController : Controller
 
         var pokemonMap = _mapper.Map<Pokemon>(updatedPokemon);
 
-        if (!_pokemonRepository.UpdatePokemon(ownerId, categoryId, pokemonMap))
+        if (!_pokemonRepository.UpdatePokemon(pokemonMap))
         {
             ModelState.AddModelError("", "Something went wrong while updating pokemon");
             return StatusCode(500, ModelState);
