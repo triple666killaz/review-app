@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ReviewApp.Dto;
 using ReviewApp.Interfaces;
 using ReviewApp.Models;
@@ -124,5 +125,35 @@ public class PokemonController : Controller
         }
 
         return Ok("Successfully created");
+    }
+
+    [HttpPut("{pokemonId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult UpdatePokemon(int pokemonId, [FromQuery]int ownerId,
+        [FromQuery]int categoryId, [FromBody]PokemonDto updatedPokemon)
+    {
+        if (updatedPokemon == null)
+            return BadRequest(ModelState);
+
+        if (pokemonId != updatedPokemon.Id)
+            return BadRequest(ModelState);
+
+        if (!_pokemonRepository.PokemonExists(pokemonId))
+            return NotFound();
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var pokemonMap = _mapper.Map<Pokemon>(updatedPokemon);
+
+        if (!_pokemonRepository.UpdatePokemon(ownerId, categoryId, pokemonMap))
+        {
+            ModelState.AddModelError("", "Something went wrong while updating pokemon");
+            return StatusCode(500, ModelState);
+        }
+
+        return Ok("Successfully updated");
     }
 }
