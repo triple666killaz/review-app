@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.IdentityModel.Tokens;
 using ReviewApp.Dto;
 using ReviewApp.Interfaces;
 using ReviewApp.Models;
@@ -48,7 +49,7 @@ public class CategoryController : Controller
         return Ok(category);
     }
 
-    [HttpGet("{categoryId}/pokemon")]
+    [HttpGet("{categoryId}/pokemons")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
     [ProducesResponseType(400)]
     public IActionResult GetPokemonByCategoryId(int categoryId)
@@ -124,5 +125,31 @@ public class CategoryController : Controller
         }
 
         return NoContent();
+    }
+
+    [HttpDelete("{categoryId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult DeleteCategory(int categoryId)
+    {
+        if (!_categoryRepository.CategoryExists(categoryId))
+            return NotFound();
+
+        var category = _categoryRepository.GetCategory(categoryId);
+        
+        if (!_categoryRepository.GetPokemonByCategoryId(categoryId).IsNullOrEmpty())
+        {
+            ModelState.AddModelError("", "Unable to delete due to connection with another entity");
+            return StatusCode(500, ModelState);
+        }
+        
+        if (!_categoryRepository.DeleteCategory(category))
+        {
+            ModelState.AddModelError("", "Something went wrong while deleting category");
+            return StatusCode(500, ModelState);
+        }
+
+        return Ok("Successfully deleted");
     }
 }

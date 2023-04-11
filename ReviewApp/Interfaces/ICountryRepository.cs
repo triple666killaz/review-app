@@ -10,4 +10,5 @@ public interface ICountryRepository
     ICollection<Owner> GetOwnersByCountry(int id);
     bool CreateCountry(Country country);
     bool UpdateCountry(Country country);
+    bool DeleteCountry(Country country);
 }

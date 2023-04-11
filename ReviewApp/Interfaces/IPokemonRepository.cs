@@ -14,5 +14,6 @@ public interface IPokemonRepository
     ICollection<Owner> GetPokemonOwners(int id);
     bool CreatePokemon(int ownerId, int categoryId, Pokemon pokemon);
     bool UpdatePokemon(Pokemon pokemon);
-    
+    bool DeletePokemon(Pokemon pokemon);
+
 }

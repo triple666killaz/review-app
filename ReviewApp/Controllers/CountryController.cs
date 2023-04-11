@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.IdentityModel.Tokens;
 using ReviewApp.Dto;
 using ReviewApp.Interfaces;
 using ReviewApp.Models;
@@ -123,6 +124,34 @@ public class CountryController : Controller
 
         return Ok("Successfully updated");
     }
-    
+
+    [HttpDelete("{countryId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult DeleteCountry(int countryId)
+    {
+        if (!_countryRepository.CountryExists(countryId))
+            return NotFound();
+
+        var country = _countryRepository.GetCountry(countryId);
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (!_countryRepository.GetOwnersByCountry(countryId).IsNullOrEmpty())
+        {
+            ModelState.AddModelError("", "Unable to delete due to connection with another entity");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!_countryRepository.DeleteCountry(country))
+        {
+            ModelState.AddModelError("", "Something went wrong while deleting category");
+            return StatusCode(500, ModelState);
+        }
+
+        return Ok("Successfully deleted");
+    }
     
 }

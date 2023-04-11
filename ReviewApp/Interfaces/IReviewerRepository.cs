@@ -10,4 +10,5 @@ public interface IReviewerRepository
     ICollection<Review> GetReviewerReviews(int id);
     bool CreateReviewer(Reviewer reviewer);
     bool UpdateReviewer(Reviewer reviewer);
+    bool DeleteReviewer(Reviewer reviewer);
 }

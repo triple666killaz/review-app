@@ -77,4 +77,10 @@ public class PokemonRepository : IPokemonRepository
         _context.Update(pokemon);
         return _context.SaveChanges() > 0;
     }
+
+    public bool DeletePokemon(Pokemon pokemon)
+    {
+        _context.Remove(pokemon);
+        return _context.SaveChanges() > 0;
+    }
 }

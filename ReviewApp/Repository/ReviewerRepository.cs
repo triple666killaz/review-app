@@ -43,4 +43,10 @@ public class ReviewerRepository : IReviewerRepository
         _context.Update(reviewer);
         return _context.SaveChanges() > 0;
     }
+
+    public bool DeleteReviewer(Reviewer reviewer)
+    {
+        _context.Remove(reviewer);
+        return _context.SaveChanges() > 0;
+    }
 }

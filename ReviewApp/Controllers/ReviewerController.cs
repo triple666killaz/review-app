@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ReviewApp.Dto;
 using ReviewApp.Interfaces;
 using ReviewApp.Models;
@@ -11,11 +12,13 @@ namespace ReviewApp.Controllers;
 public class ReviewerController : Controller
 {
     private readonly IReviewerRepository _reviewerRepository;
+    private readonly IReviewRepository _reviewRepository;
     private readonly IMapper _mapper;
 
-    public ReviewerController(IReviewerRepository reviewerRepository, IMapper mapper)
+    public ReviewerController(IReviewerRepository reviewerRepository, IReviewRepository reviewRepository, IMapper mapper)
     {
         _reviewerRepository = reviewerRepository;
+        _reviewRepository = reviewRepository;
         _mapper = mapper;
     }
 
@@ -122,8 +125,36 @@ public class ReviewerController : Controller
         }
 
         return Ok("Successfully updated");
+        
+    }
 
+    [HttpDelete("{reviewerId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult DeleteReviewer(int reviewerId)
+    {
+        if (!_reviewerRepository.ReviewerExists(reviewerId))
+            return NotFound();
 
+        var reviews = _reviewerRepository.GetReviewerReviews(reviewerId);
+        var reviewer = _reviewerRepository.GetReviewer(reviewerId);
 
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (!_reviewRepository.DeleteReviews(reviews.ToList()))
+        {
+            ModelState.AddModelError("", "Something went wrong while deleting reviews");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!_reviewerRepository.DeleteReviewer(reviewer))
+        {
+            ModelState.AddModelError("", "Something went wrong while deleting reviewer");
+            return StatusCode(500, ModelState);
+        }
+
+        return Ok("Successfully deleted"); 
     }
 }

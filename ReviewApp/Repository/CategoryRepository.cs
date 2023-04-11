@@ -43,4 +43,10 @@ public class CategoryRepository : ICategoryRepository
         _context.Update(category);
         return _context.SaveChanges() > 0;
     }
+
+    public bool DeleteCategory(Category category)
+    {
+        _context.Remove(category);
+        return _context.SaveChanges() > 0;
+    }
 }
